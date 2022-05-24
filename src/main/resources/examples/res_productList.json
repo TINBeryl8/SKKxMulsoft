@@ -1,0 +1,267 @@
+{
+  "limit": 10,
+  "offset": 0,
+  "total": 2047,
+  "results": [
+    {
+      "id": 70351,
+      "cmsId": "199019",
+      "code": "8852406571033",
+      "barcode": "8852406571033",
+      "name": "GP 60X60 ทราวาทีน ครีมม่า(POL)ตัดขอบ PM",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.344Z",
+      "images": [
+        {
+          "id": 92535,
+          "productId": 70351,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21B1D55ATRAV601/Product Image/Z21B1D55ATRAV601.jpg",
+          "fileName": "Z21B1D55ATRAV601"
+        }
+      ],
+      "info": {
+        "productId": 70351,
+        "brand": "คอตโต้",
+        "color": "เบจ",
+        "basicData": "จำนวนแผ่นต่อกล่อง: 4 แผ่น \nตารางเมตรต่อกล่อง: 1.44 ตร.ม. \nจำนวนแผ่นต่อตารางเมตร: 2.78 แผ่น",
+        "shortDescription": "กระเบื้องเอ็กซ์พอร์ซเลน ที่นำเข้ามาจากต่างประเทศ"
+      }
+    },
+    {
+      "id": 70344,
+      "cmsId": "123507",
+      "code": "8852406423660",
+      "barcode": "8852406423660",
+      "name": "BUILDTECH/ GG Coal Naturale 40x80 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.336Z",
+      "images": [
+        {
+          "id": 66781,
+          "productId": 70344,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C493BUIGBN1/Product Image/cotto-italia-series-buildtech-gg-gt748976-coa_pd419574.jpg",
+          "fileName": "cotto-italia-series-buildtech-gg-gt748976-coa_pd419574"
+        }
+      ],
+      "info": {
+        "productId": 70344,
+        "brand": "COTTO",
+        "color": "BLACK",
+        "basicData": "Tiles per box: 3 Tiles\nSquare meter(s) per box: 0.96 Square meter\nPiece per Square meter:3.125 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70320,
+      "cmsId": "43706",
+      "code": "8852406342299",
+      "barcode": "8852406342299",
+      "name": "WALKS/1.0 Beige Naturale 30x60 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.322Z",
+      "images": [
+        {
+          "id": 41173,
+          "productId": 70320,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C431WALK601/Product Image/Beige 4.jpg",
+          "fileName": "Beige 4"
+        }
+      ],
+      "info": {
+        "productId": 70320,
+        "brand": "คอตโต้",
+        "color": "BEIGE",
+        "basicData": "Tiles per box: 6 Tiles\nSquare meter(s) per box: 1.08 Square meter\nPiece per Square meter: 5.555 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70314,
+      "cmsId": "43704",
+      "code": "8852406289860",
+      "barcode": "8852406289860",
+      "name": "WALKS/1.0 White Naturale 30x60 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.315Z",
+      "images": [
+        {
+          "id": 41170,
+          "productId": 70314,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C431WALK101/Product Image/White 6.jpg",
+          "fileName": "White 6"
+        }
+      ],
+      "info": {
+        "productId": 70314,
+        "brand": "คอตโต้",
+        "color": "WHITE",
+        "basicData": "Tiles per box: 6 Tiles\nSquare meter(s) per box: 1.08 Square meter\nPiece per Square meter: 5.555 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70234,
+      "cmsId": "224277",
+      "code": "8852406657430",
+      "barcode": "8852406657430",
+      "name": "GP LAVAREDO COLD (SATI/ION) R/T60X120 PM",
+      "price": 0,
+      "parentId": 46057,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.254Z",
+      "images": [
+        {
+          "id": 62467,
+          "productId": 70234,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2D57CLAVA101/Product Image/Z21C2D57CLAVA101.jpg",
+          "fileName": "Z21C2D57CLAVA101"
+        }
+      ],
+      "info": {
+        "productId": 70234,
+        "brand": "COTTO",
+        "color": "White",
+        "basicData": "Tiles per box: 2 Tiles \nTiles per box: 1.44 Square meter \nTiles per 1 Square meter: 1.39 Tiles",
+        "shortDescription": "COTTO X-Porcelain is a porcelain-body tile with high flexural strength that contains alumina, which has almost the same level of strength as diamond.  The tile is pressed above 1,000 degree Celcius firing temperature, making it extremely resistant to stain and also has low water absorption level at 0.5%. For external and internal use."
+      }
+    },
+    {
+      "id": 70210,
+      "cmsId": "192510",
+      "code": "8852406512227",
+      "barcode": "8852406512227",
+      "name": "MT 1HE-5531 (NET/PACK 10) PM",
+      "price": 0,
+      "parentId": 63471,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.239Z",
+      "images": [
+        {
+          "id": 36841,
+          "productId": 70210,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2EMJ05531501/Product Image/mt-1he-5531-10-per-pack-pm.jpg",
+          "fileName": "mt-1he-5531-10-per-pack-pm"
+        }
+      ],
+      "info": {
+        "productId": 70210,
+        "brand": "COTTO",
+        "color": "Pink",
+        "basicData": "Tiles per box: 10 Tiles\nTiles per box: 0.78 Square meter",
+        "shortDescription": "Porcelain Mosaic Tile for covering decoration"
+      }
+    },
+    {
+      "id": 70163,
+      "cmsId": "192509",
+      "code": "8852406512227",
+      "barcode": "8852406512227",
+      "name": "MT 1HE-5531 (NET/PACK 10) PM",
+      "price": 0,
+      "parentId": 63471,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.208Z",
+      "images": [
+        {
+          "id": 26738,
+          "productId": 70163,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2EMJ05531501/Product Image/mt-1he-5531-10-per-pack-pm.jpg",
+          "fileName": "mt-1he-5531-10-per-pack-pm"
+        }
+      ],
+      "info": {
+        "productId": 70163,
+        "brand": "คอตโต้",
+        "color": "ชมพู",
+        "basicData": "จำนวนแผ่นต่อกล่อง:10 แผ่น\nตารางเมตรต่อกล่อง: 0.78 ตร.ม.",
+        "shortDescription": "กระเบื้องโมเสก เนื้อ Porcelain สำหรับใช้ตกแต่งพื้นที่ต่างๆ"
+      }
+    },
+    {
+      "id": 70083,
+      "cmsId": "227956",
+      "code": "8852406680667",
+      "barcode": "8852406680667",
+      "name": "GP MATTERHORN WHITE(HYG) R11 40X40 PM",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.128Z",
+      "images": [
+        {
+          "id": 41115,
+          "productId": 70083,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2D48CMATT101/Product Image/Z21C2D48CMATT101.jpg",
+          "fileName": "Z21C2D48CMATT101"
+        }
+      ],
+      "info": {
+        "productId": 70083,
+        "brand": "COTTO",
+        "color": "White",
+        "basicData": "Tiles per box: 6 Tiles \nTiles per box: 0.96 Square meter \nTiles per 1 Square meter: 6.25 Tiles",
+        "shortDescription": "COTTO X-Porcelain is a porcelain-body tile with high flexural strength that contains alumina, which has almost the same level of strength as diamond.  The tile is pressed above 1,000 degree Celcius firing temperature, making it extremely resistant to stain and also has low water absorption level at 0.5%. For external and internal use."
+      }
+    },
+    {
+      "id": 69949,
+      "cmsId": "219728",
+      "code": "1196391",
+      "barcode": "1196391",
+      "name": "อัลตัลยา เทาอ่อน (POL)(EXC) R/T GP 60X60 *A",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:34.970Z",
+      "images": [
+        {
+          "id": 88507,
+          "productId": 69949,
+          "imageUrl": "/files/assets/Product Media/Sourcing/1196391/Product Image/1196391.jpg",
+          "fileName": "1196391"
+        }
+      ],
+      "info": {
+        "productId": 69949,
+        "brand": "HOMECHOICE",
+        "color": "",
+        "basicData": "กระเบื้อง HOME CHOICE 60X60 *A\n\nกระเบื้อง เนื้อเกลซพอร์ซเลน ชนิดผิวมัน คุณภาพดีที่คัดสรรมาเพื่อคุณโดยเฉพาะ สะท้อนความสวยงามของหินอ่อนได้อย่างเป็นธรรมชาติ ทั้งสีสัน ลวดลาย และเส้นแร่ ให้ความสวยงามหรูหรา ด้วยการผลิตที่ได้มาตรฐานจึงทำให้มีความแข็งแกร่งทนทาน สามารถรับน้ำหนักได้ดี ทนต่อแรงกระแทกและการขีดข่วน อีกทั้งมีลวดลายสีสันสวยสมจริง ด้วยเทคโนโลยี ดิจิตอล พริ้นติ้ง ทำให้การพิมพ์ลวดลายบนผิวกระเบื้องได้โทนสีและเส้นแร่ ที่มีความคมชัดเสมือนจริง ยกระดับความหรูหราและสร้างบรรยากาศที่ดีภายในห้องของคุณได้อย่างดี อีกทั้งเป็นกระเบื้องที่มีลวดลายแบบ Random Patterns โดยลวดลายของกระเบื้องจะมีความแตกต่างเป็นเอกลักษณ์ในแต่ละแผ่น ทำให้มีความสวยงามเหมือนธรรมชาติ ในการนำมาปูในพื้นที่ที่ต้องการ ควรนำมาจัดวางคละกันให้เกิดความ Random กันให้มากที่สุด เพื่อให้ได้ความรู้สึกสัมผัสได้ถึงความเป็นธรรมชาติอย่างแท้จริง\n\nคุณสมบัติและข้อดีของกระเบื้อง HOME CHOICE\n- กระเบื้องปูพื้น/ผนัง HOME CHOICE \n- กระเบื้องหินอ่อน ชนิดผิวมัน\n- ผลิตจากเกลซพอร์ซเลนคุณภาพดี\n- ผ่านการเผาด้วยอุณหภูมิสูง ทำให้กระเบื้องมีความแข็งแกร่ง ทนทาน \n- สีสันและลวดลายบนกระเบื้องคมชัดไม่ซีดจาง\n- คุณภาพและราคาถูกกว่าหินอ่อนธรรมชาติ \n- มีความแข็งแกร่ง ทนทานกว่าหินอ่อนธรรมชาติ\n- มีลวดลายสวยงาม สมจริง ให้ความธรรมชาติ \n- ดูแลรักษาและทำความสะอาดง่าย กว่าหินอ่อนธรรมชาติ\n- รับน้ำหนักได้ดี ทนต่อแรงกระแทกและการขีดข่วน\n- อัตราการดูดซึมน้ำต่ำกว่า 0.5% \n- เหมาะสำหรับงานพื้นและงานผนัง ภายในอาคาร (พื้น, ผนัง, ห้องน้ำ เฉพาะโซนแห้ง)",
+        "shortDescription": "อัลตัลยา เทาอ่อน (POL)(EXC) R/T GP 60X60 *A"
+      }
+    },
+    {
+      "id": 69925,
+      "cmsId": "123511",
+      "code": "8852406423707",
+      "barcode": "8852406423707",
+      "name": "BUILDTECH/ GG Clay Levigato 40x80 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:34.932Z",
+      "images": [
+        {
+          "id": 74513,
+          "productId": 69925,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C493BUIG8L1/Product Image/cotto-italia-series-buildtech-gg-gt748980-cla_pd419498.jpg",
+          "fileName": "cotto-italia-series-buildtech-gg-gt748980-cla_pd419498"
+        }
+      ],
+      "info": {
+        "productId": 69925,
+        "brand": "COTTO",
+        "color": "GREY",
+        "basicData": "Tiles per box: 3 Tiles\nSquare meter(s) per box: 0.96 Square meter\nPiece per Square meter:3.125 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    }
+  ]
+}

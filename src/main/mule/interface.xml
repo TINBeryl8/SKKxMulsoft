@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <apikit:config name="smartsaleskit-system-api-config" api="resource::cb2a4d97-b91a-47bb-9eb0-9a97b16ff2a5:smartsaleskit-system-api:1.0.1:raml:zip:smartsaleskit-system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="smartsaleskit-system-api-main">
+        <http:listener config-ref="smartsaleskit-system-api-httpListenerConfig" path="/${app_api.path}/${app_api.version}/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value="#[now() as String {format: &quot;N&quot;}]" doc:name="timeNewTrans" doc:id="d06e970d-53df-47bb-a46b-e161da4dd02c" variableName="timeNewTrans" />
+        <apikit:router config-ref="smartsaleskit-system-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="smartsaleskit-system-api-console">
+        <http:listener config-ref="smartsaleskit-system-api-httpListenerConfig" path="/console/${app_api.version}/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="smartsaleskit-system-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "integrationStatusCode":"SSK_Integration_API",
+  "integrationErrorMessage": error.description,
+  "displayErrorMessage":  error.description,
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\product:smartsaleskit-system-api-config">
+        <ee:transform doc:name="Transform Message" doc:id="ec9103d3-56fb-46af-b980-212e57d6a00b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "limit": 10,
+  "offset": 0,
+  "total": 2047,
+  "results": [
+    {
+      "id": 70351,
+      "cmsId": "199019",
+      "code": "8852406571033",
+      "barcode": "8852406571033",
+      "name": "GP 60X60 ทราวาทีน ครีมม่า(POL)ตัดขอบ PM",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.344Z",
+      "images": [
+        {
+          "id": 92535,
+          "productId": 70351,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21B1D55ATRAV601/Product Image/Z21B1D55ATRAV601.jpg",
+          "fileName": "Z21B1D55ATRAV601"
+        }
+      ],
+      "info": {
+        "productId": 70351,
+        "brand": "คอตโต้",
+        "color": "เบจ",
+        "basicData": "จำนวนแผ่นต่อกล่อง: 4 แผ่น \nตารางเมตรต่อกล่อง: 1.44 ตร.ม. \nจำนวนแผ่นต่อตารางเมตร: 2.78 แผ่น",
+        "shortDescription": "กระเบื้องเอ็กซ์พอร์ซเลน ที่นำเข้ามาจากต่างประเทศ"
+      }
+    },
+    {
+      "id": 70344,
+      "cmsId": "123507",
+      "code": "8852406423660",
+      "barcode": "8852406423660",
+      "name": "BUILDTECH/ GG Coal Naturale 40x80 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.336Z",
+      "images": [
+        {
+          "id": 66781,
+          "productId": 70344,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C493BUIGBN1/Product Image/cotto-italia-series-buildtech-gg-gt748976-coa_pd419574.jpg",
+          "fileName": "cotto-italia-series-buildtech-gg-gt748976-coa_pd419574"
+        }
+      ],
+      "info": {
+        "productId": 70344,
+        "brand": "COTTO",
+        "color": "BLACK",
+        "basicData": "Tiles per box: 3 Tiles\nSquare meter(s) per box: 0.96 Square meter\nPiece per Square meter:3.125 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70320,
+      "cmsId": "43706",
+      "code": "8852406342299",
+      "barcode": "8852406342299",
+      "name": "WALKS/1.0 Beige Naturale 30x60 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.322Z",
+      "images": [
+        {
+          "id": 41173,
+          "productId": 70320,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C431WALK601/Product Image/Beige 4.jpg",
+          "fileName": "Beige 4"
+        }
+      ],
+      "info": {
+        "productId": 70320,
+        "brand": "คอตโต้",
+        "color": "BEIGE",
+        "basicData": "Tiles per box: 6 Tiles\nSquare meter(s) per box: 1.08 Square meter\nPiece per Square meter: 5.555 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70314,
+      "cmsId": "43704",
+      "code": "8852406289860",
+      "barcode": "8852406289860",
+      "name": "WALKS/1.0 White Naturale 30x60 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.315Z",
+      "images": [
+        {
+          "id": 41170,
+          "productId": 70314,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C431WALK101/Product Image/White 6.jpg",
+          "fileName": "White 6"
+        }
+      ],
+      "info": {
+        "productId": 70314,
+        "brand": "คอตโต้",
+        "color": "WHITE",
+        "basicData": "Tiles per box: 6 Tiles\nSquare meter(s) per box: 1.08 Square meter\nPiece per Square meter: 5.555 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    },
+    {
+      "id": 70234,
+      "cmsId": "224277",
+      "code": "8852406657430",
+      "barcode": "8852406657430",
+      "name": "GP LAVAREDO COLD (SATI/ION) R/T60X120 PM",
+      "price": 0,
+      "parentId": 46057,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.254Z",
+      "images": [
+        {
+          "id": 62467,
+          "productId": 70234,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2D57CLAVA101/Product Image/Z21C2D57CLAVA101.jpg",
+          "fileName": "Z21C2D57CLAVA101"
+        }
+      ],
+      "info": {
+        "productId": 70234,
+        "brand": "COTTO",
+        "color": "White",
+        "basicData": "Tiles per box: 2 Tiles \nTiles per box: 1.44 Square meter \nTiles per 1 Square meter: 1.39 Tiles",
+        "shortDescription": "COTTO X-Porcelain is a porcelain-body tile with high flexural strength that contains alumina, which has almost the same level of strength as diamond.  The tile is pressed above 1,000 degree Celcius firing temperature, making it extremely resistant to stain and also has low water absorption level at 0.5%. For external and internal use."
+      }
+    },
+    {
+      "id": 70210,
+      "cmsId": "192510",
+      "code": "8852406512227",
+      "barcode": "8852406512227",
+      "name": "MT 1HE-5531 (NET/PACK 10) PM",
+      "price": 0,
+      "parentId": 63471,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.239Z",
+      "images": [
+        {
+          "id": 36841,
+          "productId": 70210,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2EMJ05531501/Product Image/mt-1he-5531-10-per-pack-pm.jpg",
+          "fileName": "mt-1he-5531-10-per-pack-pm"
+        }
+      ],
+      "info": {
+        "productId": 70210,
+        "brand": "COTTO",
+        "color": "Pink",
+        "basicData": "Tiles per box: 10 Tiles\nTiles per box: 0.78 Square meter",
+        "shortDescription": "Porcelain Mosaic Tile for covering decoration"
+      }
+    },
+    {
+      "id": 70163,
+      "cmsId": "192509",
+      "code": "8852406512227",
+      "barcode": "8852406512227",
+      "name": "MT 1HE-5531 (NET/PACK 10) PM",
+      "price": 0,
+      "parentId": 63471,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.208Z",
+      "images": [
+        {
+          "id": 26738,
+          "productId": 70163,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2EMJ05531501/Product Image/mt-1he-5531-10-per-pack-pm.jpg",
+          "fileName": "mt-1he-5531-10-per-pack-pm"
+        }
+      ],
+      "info": {
+        "productId": 70163,
+        "brand": "คอตโต้",
+        "color": "ชมพู",
+        "basicData": "จำนวนแผ่นต่อกล่อง:10 แผ่น\nตารางเมตรต่อกล่อง: 0.78 ตร.ม.",
+        "shortDescription": "กระเบื้องโมเสก เนื้อ Porcelain สำหรับใช้ตกแต่งพื้นที่ต่างๆ"
+      }
+    },
+    {
+      "id": 70083,
+      "cmsId": "227956",
+      "code": "8852406680667",
+      "barcode": "8852406680667",
+      "name": "GP MATTERHORN WHITE(HYG) R11 40X40 PM",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:35.128Z",
+      "images": [
+        {
+          "id": 41115,
+          "productId": 70083,
+          "imageUrl": "/files/assets/Product Media/COTTO Tiles/Z21C2D48CMATT101/Product Image/Z21C2D48CMATT101.jpg",
+          "fileName": "Z21C2D48CMATT101"
+        }
+      ],
+      "info": {
+        "productId": 70083,
+        "brand": "COTTO",
+        "color": "White",
+        "basicData": "Tiles per box: 6 Tiles \nTiles per box: 0.96 Square meter \nTiles per 1 Square meter: 6.25 Tiles",
+        "shortDescription": "COTTO X-Porcelain is a porcelain-body tile with high flexural strength that contains alumina, which has almost the same level of strength as diamond.  The tile is pressed above 1,000 degree Celcius firing temperature, making it extremely resistant to stain and also has low water absorption level at 0.5%. For external and internal use."
+      }
+    },
+    {
+      "id": 69949,
+      "cmsId": "219728",
+      "code": "1196391",
+      "barcode": "1196391",
+      "name": "อัลตัลยา เทาอ่อน (POL)(EXC) R/T GP 60X60 *A",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:34.970Z",
+      "images": [
+        {
+          "id": 88507,
+          "productId": 69949,
+          "imageUrl": "/files/assets/Product Media/Sourcing/1196391/Product Image/1196391.jpg",
+          "fileName": "1196391"
+        }
+      ],
+      "info": {
+        "productId": 69949,
+        "brand": "HOMECHOICE",
+        "color": "",
+        "basicData": "กระเบื้อง HOME CHOICE 60X60 *A\n\nกระเบื้อง เนื้อเกลซพอร์ซเลน ชนิดผิวมัน คุณภาพดีที่คัดสรรมาเพื่อคุณโดยเฉพาะ สะท้อนความสวยงามของหินอ่อนได้อย่างเป็นธรรมชาติ ทั้งสีสัน ลวดลาย และเส้นแร่ ให้ความสวยงามหรูหรา ด้วยการผลิตที่ได้มาตรฐานจึงทำให้มีความแข็งแกร่งทนทาน สามารถรับน้ำหนักได้ดี ทนต่อแรงกระแทกและการขีดข่วน อีกทั้งมีลวดลายสีสันสวยสมจริง ด้วยเทคโนโลยี ดิจิตอล พริ้นติ้ง ทำให้การพิมพ์ลวดลายบนผิวกระเบื้องได้โทนสีและเส้นแร่ ที่มีความคมชัดเสมือนจริง ยกระดับความหรูหราและสร้างบรรยากาศที่ดีภายในห้องของคุณได้อย่างดี อีกทั้งเป็นกระเบื้องที่มีลวดลายแบบ Random Patterns โดยลวดลายของกระเบื้องจะมีความแตกต่างเป็นเอกลักษณ์ในแต่ละแผ่น ทำให้มีความสวยงามเหมือนธรรมชาติ ในการนำมาปูในพื้นที่ที่ต้องการ ควรนำมาจัดวางคละกันให้เกิดความ Random กันให้มากที่สุด เพื่อให้ได้ความรู้สึกสัมผัสได้ถึงความเป็นธรรมชาติอย่างแท้จริง\n\nคุณสมบัติและข้อดีของกระเบื้อง HOME CHOICE\n- กระเบื้องปูพื้น/ผนัง HOME CHOICE \n- กระเบื้องหินอ่อน ชนิดผิวมัน\n- ผลิตจากเกลซพอร์ซเลนคุณภาพดี\n- ผ่านการเผาด้วยอุณหภูมิสูง ทำให้กระเบื้องมีความแข็งแกร่ง ทนทาน \n- สีสันและลวดลายบนกระเบื้องคมชัดไม่ซีดจาง\n- คุณภาพและราคาถูกกว่าหินอ่อนธรรมชาติ \n- มีความแข็งแกร่ง ทนทานกว่าหินอ่อนธรรมชาติ\n- มีลวดลายสวยงาม สมจริง ให้ความธรรมชาติ \n- ดูแลรักษาและทำความสะอาดง่าย กว่าหินอ่อนธรรมชาติ\n- รับน้ำหนักได้ดี ทนต่อแรงกระแทกและการขีดข่วน\n- อัตราการดูดซึมน้ำต่ำกว่า 0.5% \n- เหมาะสำหรับงานพื้นและงานผนัง ภายในอาคาร (พื้น, ผนัง, ห้องน้ำ เฉพาะโซนแห้ง)",
+        "shortDescription": "อัลตัลยา เทาอ่อน (POL)(EXC) R/T GP 60X60 *A"
+      }
+    },
+    {
+      "id": 69925,
+      "cmsId": "123511",
+      "code": "8852406423707",
+      "barcode": "8852406423707",
+      "name": "BUILDTECH/ GG Clay Levigato 40x80 cm.",
+      "price": 0,
+      "parentId": null,
+      "status": "active",
+      "createdDate": "2022-05-17T10:42:34.932Z",
+      "images": [
+        {
+          "id": 74513,
+          "productId": 69925,
+          "imageUrl": "/files/assets/Product Media/COTTO Italia/Z21A3C493BUIG8L1/Product Image/cotto-italia-series-buildtech-gg-gt748980-cla_pd419498.jpg",
+          "fileName": "cotto-italia-series-buildtech-gg-gt748980-cla_pd419498"
+        }
+      ],
+      "info": {
+        "productId": 69925,
+        "brand": "COTTO",
+        "color": "GREY",
+        "basicData": "Tiles per box: 3 Tiles\nSquare meter(s) per box: 0.96 Square meter\nPiece per Square meter:3.125 Tiles",
+        "shortDescription": "100% Italian porcelain tiles for floor & Wall"
+      }
+    }
+  ]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="24cc6896-719c-46a2-b473-f2cab85a432a" doc:name="response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	limit: payload.limit,
+	offset: payload.offset,
+	total: payload.total,
+	results: payload.results map (item) -> {
+		id: item.id,
+		cmsId: item.cmsId,
+		code: item.code,
+		barcode: item.barcode,
+		name: item.name,
+		price: item.price,
+		parentId: item.parentId,
+		status: item.status,
+		createdDate: item.createdDate,
+		images: item.images map {
+			id: $.id,
+			productId: $.productId,
+			imageUrl: $.imageUrl,
+			fileName: $.fileName
+		},
+		info: {
+			productId: item.info.productId,
+			brand: item.info.brand,
+			color: item.info.color,
+			basicData: item.info.basicData,
+			shortDescription: item.info.shortDescription
+		}
+	}
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\product\(id):smartsaleskit-system-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform doc:name="Transform Message" doc:id="2386e98a-a400-4a9b-a391-a506ee4e9d6e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "id": 59,
+  "cmsId": "214019",
+  "code": "8852248800032",
+  "barcode": "8852248800032",
+  "name": "Zinus Topper รุ่น Ada Green tea Memory Foam 6 ฟุต",
+  "price": 0,
+  "parentId": 54379,
+  "status": "active",
+  "createdDate": "2022-05-17T10:41:48.463Z",
+  "images": [
+    {
+      "id": 12404,
+      "syncId": "105982",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-03.jpg",
+      "fileName": "8852248800032-03",
+      "status": "active"
+    },
+    {
+      "id": 12403,
+      "syncId": "105981",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-02.jpg",
+      "fileName": "8852248800032-02",
+      "status": "active"
+    },
+    {
+      "id": 12410,
+      "syncId": "105988",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-09.jpg",
+      "fileName": "8852248800032-09",
+      "status": "active"
+    },
+    {
+      "id": 12402,
+      "syncId": "105980",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-01.jpg",
+      "fileName": "8852248800032-01",
+      "status": "active"
+    },
+    {
+      "id": 12409,
+      "syncId": "105987",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-08.jpg",
+      "fileName": "8852248800032-08",
+      "status": "active"
+    },
+    {
+      "id": 12411,
+      "syncId": "105989",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-10.jpg",
+      "fileName": "8852248800032-10",
+      "status": "active"
+    },
+    {
+      "id": 12406,
+      "syncId": "105984",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-05.jpg",
+      "fileName": "8852248800032-05",
+      "status": "active"
+    },
+    {
+      "id": 12412,
+      "syncId": "105992",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-13.jpg",
+      "fileName": "8852248800032-13",
+      "status": "active"
+    },
+    {
+      "id": 12407,
+      "syncId": "105985",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-06.jpg",
+      "fileName": "8852248800032-06",
+      "status": "active"
+    },
+    {
+      "id": 12417,
+      "syncId": "105986",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-07.jpg",
+      "fileName": "8852248800032-07",
+      "status": "active"
+    },
+    {
+      "id": 12414,
+      "syncId": "105990",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-11.jpg",
+      "fileName": "8852248800032-11",
+      "status": "active"
+    },
+    {
+      "id": 12405,
+      "syncId": "105983",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-04.jpg",
+      "fileName": "8852248800032-04",
+      "status": "active"
+    },
+    {
+      "id": 12413,
+      "syncId": "105991",
+      "productId": 59,
+      "imageUrl": "/files/assets/Product Media/Sourcing/8852248800032/Product Image/8852248800032-12.jpg",
+      "fileName": "8852248800032-12",
+      "status": "active"
+    }
+  ],
+  "info": {
+    "productId": 59,
+    "cmsId": "214019",
+    "sapId": "8852248800032",
+    "hanaId": "",
+    "sourceSystem": "DM",
+    "barcode": "8852248800032",
+    "businessUnit": "Sourcing",
+    "brand": "Zinus",
+    "subBrand": "Sourcing",
+    "color": "White",
+    "basicData": "Zinus ที่นอนชาเขียว รุ่น Ada รับประกัน 5 ปี *หนา 4 cm. ส่งฟรี\n- มีการรับประกันสินค้า (สามารถลงทะเบียนOnlineได้ด้วยตัวเอง)\n- จัดส่งฟรีทั่วประเทศ โดยบริษัทผู้ผลิตที่มีมาตรฐาน\n\n- zinus ( ซีนุส ) เป็นเจ้าของสิทธิบัตรกว่า 379 ฉบับ เกี่ยวกับการพัฒนาสินค้าและการบรรจุส่งโฟมทุกชนิดของซีนุสได้รับการรับรองจาก CertiPure-US เพื่อความปลอดภัยของลูกค้า\n- นำเข้าจากต่างประเทศ การันตรีด้วยยอดขายอันดับ 1 จากอเมริกา ในอเมซอน ด้วยยอดขายเกือบ 3,000,000 ชิ้นต่อปี \u0013? มีริวิวเกือบครึ่งล้านครั้งในอเมซอน\n\n- สเปค: แน่น\n- รับประกันโครงสร้าง 5 ปี (เงื่อนไขเป็นไปตามบริษัทกำหนด)\n- ความหนา 4 cm.\n- สามารถถอดผ้าหุ้มด้านนอกออกมาซักทำความสะอาดได้\n- มีความแข็งแรง ทนทาน มีความยืดหยุ่น\n- รองรับสรีระได้ดีเยี่ยม\n\nรายละเอียดสินค้า\n- ชั้นโฟมความหนาแน่นสูงแต่ความยืดหยุ่นต่ำ จะค่อยๆ ปรับตัวเพื่อรองรับตามสรีระของคุณ\n- ชั้นโฟมความหนาแน่นสูงและยืดหยุ่นสูง จะเพิ่มความแข็งแรง ทนทาน เพื่อการรองรับที่มั่นคง\n- ผ้าหุ้มด้านนอกสามารถถอดออกได้ เพื่อง่ายต่อการทำความสะอาด\n- ด้านในของผ้าหุ้ม เป็นผ้าชนิดกันลื่น เพื่อป้องการเลื่อนของผ้าหุ้มระหว่างการใช้งาน\n \nคุณสมบัติของสินค้า\n- ให้คุณหลับได้อย่างสบายด้วยสารสกัดจากชาเขียว โครงสร้างถูกปรับแต่งให้เหมาะกับสรีระของคนไทย\n- นวัตกรรมเมมโมรี่โฟมด้วยเทคโนโลยีล่าสุดของซีนุส ใช้วัสดุจากธรรมชาติ ให้ความรู้สึกอ่อนโยนและนุ่มนวล ปรับให้เหมาะสมกับสรีระของคุณเพื่อมอบความสบายให้ทุกค่ำคืนของคุณ\n- ที่นอนผ่านการตรวจสอบแล้วว่าผ่านเกณฑ์การรับรองที่เข้มงวดเช่น วัสดุภายใน การคลายตัวของส่วนประกอบและความทนทาน ไม่มีวัสดุที่อาจมีสารพิษปนเปื้อนเช่น พลาเลท สารหน่วงติดไฟ ฟอร์มาดีไฮด์ ฯลฯ เพื่อให้ได้สินค้าที่ดีที่สุด ส่งถึงมือคุณ\n\nข้อมูลเพิ่มเติมของสินค้า(จากผู้ผลิต)\n- ไม่ว่าจะเป็นที่ไหน เวลาใด เราจะเปลี่ยนที่นอนเก่า หรือพื้นแข็งเป็นเตียงนุ่ม\n- คุณสามารถเลือกความสูง ความหนา ได้ด้วยตนเอง\n- ผ้าทอแจ๊คการ์ด เนื้อนุ่มเรียบเนียน ความโปร่งสบายและความทนทานเพื่อให้สภาพแวดล้อมการนอนหลับที่น่าพอใจ สีเขียวสดใส ให้ความรู้สึกอบอุ่นและสดชื่น\n\nระยะเวลาการจัดส่ง TOPPER\n- กรุงเทพฯ ภายใน  5-7 วันทำการ\n- ต่างจังหวัด ภายใน 7-14 วันทำการ",
+    "shortDescription": "Zinus Topper รุ่น Ada Green tea Memory Foam 6 ฟุต",
+    "subCategory": "P2973",
+    "mainSapId": "8852248800001",
+    "groupType": "Variance",
+    "filterApplication": "",
+    "filterAvailability": "",
+    "filterBenefit": "",
+    "filterCollection": "",
+    "filterColor": "",
+    "filterDesign": "",
+    "filterDiameter": "",
+    "filterFacing": "",
+    "filterFunction": "",
+    "filterLength": "",
+    "filterMaterial": "",
+    "filterModel": "",
+    "filterPattern": "",
+    "filterPerformance": "",
+    "filterSeries": "",
+    "filterShape": "",
+    "filterSite": "",
+    "filterSize": "",
+    "filterStyle": "",
+    "filterSystem": "",
+    "filterThickness": "",
+    "filterType": "",
+    "filterWidth": "",
+    "unit": "",
+    "unitCode": "",
+    "unitPerUsageArea": "",
+    "usageAreaPerPackage": "",
+    "usageAreaPerUnit": "",
+    "unitPerPallet": null,
+    "weightNumber": "182",
+    "weightUnit": "ซม.",
+    "volumeNumber": "0",
+    "volumeUnit": "",
+    "widthNumber": 182,
+    "widthText": "",
+    "widthUnit": "ซม.",
+    "heightNumber": 4,
+    "heightText": "",
+    "heightUnit": "ซม.",
+    "lengthNumber": 198,
+    "lengthText": "",
+    "lengthUnit": "ซม.",
+    "thicknessNumber": 0,
+    "thicknessText": "",
+    "thicknessUnit": "",
+    "product2D": "[]",
+    "product3D": "[]",
+    "image360": "[]",
+    "createdAt": "2022-05-17T10:42:35.465Z"
+  },
+  "categories": [
+    {
+      "id": 307,
+      "code": "P2973",
+      "name": "topper",
+      "parentId": 234,
+      "status": "active",
+      "calculable": false,
+      "mainCategory": {
+        "id": 234,
+        "code": null,
+        "name": "Home & Living",
+        "parentId": null,
+        "status": "active",
+        "calculable": null,
+        "groups": [
+          {
+            "id": 10,
+            "name": "สินค้าเพื่อที่อยู่อาศัย",
+            "iconUrl": "house.svg",
+            "url": "",
+            "seq": 10
+          }
+        ]
+      }
+    }
+  ],
+  "applications": [],
+  "attachments": [],
+  "parent": {
+    "id": 54379,
+    "cmsId": "214013",
+    "code": "8852248800001",
+    "barcode": "8852248800001",
+    "name": "Zinus Topper รุ่น Ada Green tea Memory Foam 3 ฟุต",
+    "price": 0,
+    "parentId": null,
+    "status": "active",
+    "createdDate": "2022-05-17T10:42:24.062Z",
+    "children": [
+      {
+        "id": 59,
+        "cmsId": "214019",
+        "code": "8852248800032",
+        "barcode": "8852248800032",
+        "name": "Zinus Topper รุ่น Ada Green tea Memory Foam 6 ฟุต",
+        "price": 0,
+        "parentId": 54379,
+        "status": "active",
+        "createdDate": "2022-05-17T10:41:48.463Z"
+      },
+      {
+        "id": 40188,
+        "cmsId": "214017",
+        "code": "8852248800025",
+        "barcode": "8852248800025",
+        "name": "Zinus Topper รุ่น Ada Green tea Memory Foam 5 ฟุต",
+        "price": 0,
+        "parentId": 54379,
+        "status": "active",
+        "createdDate": "2022-05-17T10:42:14.000Z"
+      },
+      {
+        "id": 40302,
+        "cmsId": "214015",
+        "code": "8852248800018",
+        "barcode": "8852248800018",
+        "name": "Zinus Topper รุ่น Ada Green tea Memory Foam 3.5 ฟุต",
+        "price": 0,
+        "parentId": 54379,
+        "status": "active",
+        "createdDate": "2022-05-17T10:42:14.068Z"
+      }
+    ]
+  },
+  "children": []
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="response" doc:id="860b75fb-dde8-43b0-b848-b0fcdf1c1be8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	id: null,
+	cmsId: null,
+	code: null,
+	barcode: null,
+	name: null,
+	price: null,
+	parentId: null,
+	status: null,
+	createdDate: null,
+	images: [{
+		id: null,
+		syncId: null,
+		productId: null,
+		imageUrl: null,
+		fileName: null,
+		status: null
+	}],
+	info: {
+		productId: null,
+		cmsId: null,
+		sapId: null,
+		hanaId: null,
+		sourceSystem: null,
+		barcode: null,
+		businessUnit: null,
+		brand: null,
+		subBrand: null,
+		color: null,
+		basicData: null,
+		shortDescription: null,
+		subCategory: null,
+		mainSapId: null,
+		groupType: null,
+		filterApplication: null,
+		filterAvailability: null,
+		filterBenefit: null,
+		filterCollection: null,
+		filterColor: null,
+		filterDesign: null,
+		filterDiameter: null,
+		filterFacing: null,
+		filterFunction: null,
+		filterLength: null,
+		filterMaterial: null,
+		filterModel: null,
+		filterPattern: null,
+		filterPerformance: null,
+		filterSeries: null,
+		filterShape: null,
+		filterSite: null,
+		filterSize: null,
+		filterStyle: null,
+		filterSystem: null,
+		filterThickness: null,
+		filterType: null,
+		filterWidth: null,
+		unit: null,
+		unitCode: null,
+		unitPerUsageArea: null,
+		usageAreaPerPackage: null,
+		usageAreaPerUnit: null,
+		unitPerPallet: null,
+		weightNumber: null,
+		weightUnit: null,
+		volumeNumber: null,
+		volumeUnit: null,
+		widthNumber: null,
+		widthText: null,
+		widthUnit: null,
+		heightNumber: null,
+		heightText: null,
+		heightUnit: null,
+		lengthNumber: null,
+		lengthText: null,
+		lengthUnit: null,
+		thicknessNumber: null,
+		thicknessText: null,
+		thicknessUnit: null,
+		product2D: null,
+		product3D: null,
+		image360: null,
+		createdAt: null
+	},
+	categories: [{
+		id: null,
+		code: null,
+		name: null,
+		parentId: null,
+		status: null,
+		calculable: null,
+		mainCategory: {
+			id: null,
+			code: null,
+			name: null,
+			parentId: null,
+			status: null,
+			calculable: null,
+			groups: [{
+				id: null,
+				name: null,
+				iconUrl: null,
+				url: null,
+				seq: null
+			}]
+		}
+	}],
+	applications: null,
+	attachments: null,
+	parent: {
+		id: null,
+		cmsId: null,
+		code: null,
+		barcode: null,
+		name: null,
+		price: null,
+		parentId: null,
+		status: null,
+		createdDate: null,
+		children: [{
+			id: null,
+			cmsId: null,
+			code: null,
+			barcode: null,
+			name: null,
+			price: null,
+			parentId: null,
+			status: null,
+			createdDate: null
+		}]
+	},
+	children: null
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>
