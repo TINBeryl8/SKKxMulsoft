@@ -12,8 +12,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <set-variable value="#[now() as String {format: &quot;N&quot;}]" doc:name="timeNewTrans" doc:id="d06e970d-53df-47bb-a46b-e161da4dd02c" variableName="timeNewTrans" />
-        <apikit:router config-ref="smartsaleskit-system-api-config" />
+        <set-variable value="#[attributes.queryParams]" doc:name="commonQueryParams" doc:id="267a05d4-eb25-43c1-b834-285584d1238a" variableName="commonQueryParams"/>
+		<apikit:router config-ref="smartsaleskit-system-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -151,7 +151,8 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\product:smartsaleskit-system-api-config">
-        <ee:transform doc:name="Transform Message" doc:id="ec9103d3-56fb-46af-b980-212e57d6a00b" >
+        <flow-ref doc:name="product_listSub_Flow" doc:id="cfd3d817-2b72-49d7-ab9a-93d9c9b2c015" name="product_listSub_Flow"/>
+		<ee:transform doc:name="Transform Message" doc:id="ec9103d3-56fb-46af-b980-212e57d6a00b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -463,12 +464,206 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="get:\product\(id):smartsaleskit-system-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="set id variable">
             <ee:variables>
                 <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <ee:transform doc:name="Transform Message" doc:id="2386e98a-a400-4a9b-a391-a506ee4e9d6e">
+		<flow-ref doc:name="product_detail_subFlow" doc:id="a158e6b1-c39c-40ce-ace8-0e54a55523e4" name="product_detail_subFlow"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="response" doc:id="860b75fb-dde8-43b0-b848-b0fcdf1c1be8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var comn_prod = vars.COMN_PROD_RES[0]
+var comn_img = vars.COMN_PROD_IMG_RES
+var comn_attach = vars.COMN_PROD_DTL_IMG[0]
+var comn_app = vars.COMN_PROD_DTL_RES[0]
+---
+{
+//	id: null,
+	cmsId: comn_prod.CMS_ID default "",
+	code: if(comn_prod.Barcode != null) comn_prod.Barcode 
+		else if (comn_prod.MAT_NO_SAP_R3 != null) comn_prod.MAT_NO_SAP_R3 
+		else comn_prod.MAT_NO_HANA default "",
+	barcode: comn_prod.Barcode default "",
+	name: comn_prod.Product_Name_TH default "",
+//	price: comn_prod.price,
+//	parentId: null,
+	status: comn_prod.Active_Status_Website default "",
+//	createdDate: null,
+	images: comn_img map {
+//		id: comn_img,
+		syncId: $.Sitecore_ID default "",
+		productId: $.PROD_ID default "",
+		imageUrl: $.Attachment_URL default "",
+		fileName: $.File_name default "",
+//		status: comn_img
+	},
+	info: {
+		productId: comn_prod.PROD_ID default "",
+		cmsId: comn_prod.CMS_ID default "",
+		sapId: comn_prod.MAT_NO_SAP_R3 default "",
+		hanaId: comn_prod.MAT_NO_HANA default "",
+		sourceSystem: comn_prod.SRC_SYS default "",
+		barcode: comn_prod.Barcode default "",
+		businessUnit: comn_prod.BU default "",
+		brand: comn_prod.Brand_Name_TH default "",
+		subBrand: comn_prod.Subbrand default "",
+		color: comn_prod.Colour default "",
+		basicData: comn_prod.Basic_Data default "",
+		shortDescription: comn_prod.Short_Description default "",
+		subCategory: comn_prod.PH2 default "",
+		mainSapId: comn_prod.Main_Product_SAP_ID default "",
+		groupType: comn_prod.Group_Type default "",
+		filterApplication: comn_prod.Filter_Application default "",
+		filterAvailability: comn_prod.Filter_Availability default "",
+		filterBenefit: comn_prod.Filter_Benefit default "",
+		filterCollection: comn_prod.Filter_Collection default "",
+		filterColor: comn_prod.Filter_Color default "",
+		filterDesign: comn_prod.Filter_Design default "",
+		filterDiameter: comn_prod.Filter_Diameter default "",
+		filterFacing: comn_prod.Filter_Facing default "",
+		filterFunction: comn_prod.Filter_Function default "",
+		filterLength: comn_prod.Filter_Length default "",
+		filterMaterial: comn_prod.Filter_Material default "",
+		filterModel: comn_prod.Filter_Model default "",
+		filterPattern: comn_prod.Filter_Pattern default "",
+		filterPerformance: comn_prod.Filter_Performance default "",
+		filterSeries: comn_prod.Filter_Series default "",
+		filterShape: comn_prod.Filter_Shape default "",
+		filterSite: comn_prod.Filter_Site default "",
+		filterSize: comn_prod.Filter_Size default "",
+		filterStyle: comn_prod.Filter_Style default "",
+		filterSystem: comn_prod.Filter_System default "",
+		filterThickness: comn_prod.Filter_Thickness default "",
+		filterType: comn_prod.Filter_Type default "",
+		filterWidth: comn_prod.Filter_Width default "",
+		unit: comn_prod.Unit default "",
+		unitCode: comn_prod.Unit_code default "",
+		unitPerUsageArea: comn_prod.Unit_Per_Usage_Area default "",
+		usageAreaPerPackage: comn_prod.Usage_Area_Per_Package default "",
+		usageAreaPerUnit: comn_prod.Usage_Area_Per_Unit default "",
+//		unitPerPallet: comn_prod,
+		weightNumber: comn_prod.Weight_Number default "",
+		weightUnit: comn_prod.Weight_Unit default "",
+		volumeNumber: comn_prod.Volume_Number default "",
+		volumeUnit: comn_prod.Volume_Unit default "",
+		widthNumber: comn_prod.Width_Number default "",
+		widthText: comn_prod.Width_Text default "",
+		widthUnit: comn_prod.Width_Unit default "",
+		heightNumber: comn_prod.Height_Number default "",
+		heightText: comn_prod.Height_Text default "",
+		heightUnit: comn_prod.Height_Unit default "",
+		lengthNumber: comn_prod.Length_Number default "",
+		lengthText: comn_prod.Length_Text default "",
+		lengthUnit: comn_prod.Length_Unit default "",
+		thicknessNumber: comn_prod.Thickness_Number default "",
+		thicknessText: comn_prod.Thickness_Text default "",
+		thicknessUnit: comn_prod.Thickness_Unit default "",
+		product2D: comn_prod.Product_2D default "",
+		product3D: comn_prod.Product_3D default "",
+		image360: comn_prod.Image360 default "",
+//		createdAt: comn_prod
+	},
+	categories: [{
+//		id: null,
+		code: comn_prod.PH2 default "",
+//		name: null,
+//		parentId: null,
+//		status: null,
+//		calculable: null,
+//		mainCategory: {
+//			id: null,
+//			code: null,
+//			name: null,
+//			parentId: null,
+//			status: null,
+//			calculable: null,
+//			groups: [{
+//				id: null,
+//				name: null,
+//				iconUrl: null,
+//				url: null,
+//				seq: null
+//			}]
+//		}
+	}],
+	applications: {
+//		id: "",
+		cmsId: comn_app.CMS_ID default "",
+		syncId: comn_app.Application_CMS_ID default "",
+		name: comn_attach.File_name default "",
+//		description: "",
+		applicationType: comn_app.Application_Type default "",
+//		contentType: "",
+//		expirePeriod: "",
+//		applicableFor: "",
+//		url: "",
+//		subBrand: "",
+//		market: "",
+//		confidential: "",
+//		status: "",
+		productId: comn_app.PROD_ID default ""
+	},
+	attachments: {
+//		id: comn_attach.id,
+//		attachmentType: comn_attach,
+		siteCoreId: comn_attach.Sitecore_ID default "",
+		title: comn_attach.title default "",
+		fileName: comn_attach.File_name default "",
+		attachmentUrl: comn_attach.Attachment_URL default "", 
+		format: comn_attach.Format default "",
+		extension: comn_attach.Extension default "",
+		dimension: comn_attach.Dimension default "",
+		width: comn_attach.Width default "",
+		height: comn_attach.Height default "",
+		length: comn_attach.Length default "",
+//		status: "",
+//		createdDate: "",
+//		createdBy: "",
+//		updatedDate: "",
+//		updatedBy: "",
+		productId: comn_attach.PROD_ID default ""
+	},
+	parent: if(comn_prod.MAT_NO_SAP_R3 != comn_prod.Main_Product_SAP_ID) {
+//		id: vars.check_parent_res.id,
+		cmsId: vars.check_parent_res.CMS_ID default "",
+		code: vars.check_parent_res.Barcode default "",
+		barcode: vars.check_parent_res.Barcode default "",
+		name: vars.check_parent_res.Product_Name_TH default "",
+		price: vars.check_parent_res.price default "",
+//		parentId: vars.check_parent_res.Main_Product_SAP_ID,
+		status: vars.check_parent_res.Active_Status_Website default "",
+//		createdDate: null,
+		children: vars.check_child_res map {
+//			id: $.id,
+			cmsId: $.CMS_ID default "",
+			code: $.Barcode default "",
+			barcode: $.Barcode default "",
+			name: $.Product_Name_TH default "",
+//			price: $.price,
+			parentId: $.Main_Product_SAP_ID default "",
+			status: $.Active_Status_Website default "",
+//			createdDate: null
+		}
+	} else [],
+	children: if (comn_prod.MAT_NO_SAP_R3 == comn_prod.Main_Product_SAP_ID) vars.check_parent_res map {
+//			id: $.id,
+			cmsId: $.CMS_ID default "",
+			code: $.Barcode default "",
+			barcode: $.Barcode default "",
+			name: $.Product_Name_TH default "",
+//			price: $.price,
+			parentId: $.Main_Product_SAP_ID default "",
+			status: $.Active_Status_Website default "",
+//			createdDate: null
+	} else []
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+	<sub-flow name="interfaceSub_Flow" doc:id="e1e49d08-03fb-4023-b7c6-20380a7e2411" >
+		<ee:transform doc:name="Transform Message" doc:id="2386e98a-a400-4a9b-a391-a506ee4e9d6e">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -734,145 +929,5 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="response" doc:id="860b75fb-dde8-43b0-b848-b0fcdf1c1be8">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	id: null,
-	cmsId: null,
-	code: null,
-	barcode: null,
-	name: null,
-	price: null,
-	parentId: null,
-	status: null,
-	createdDate: null,
-	images: [{
-		id: null,
-		syncId: null,
-		productId: null,
-		imageUrl: null,
-		fileName: null,
-		status: null
-	}],
-	info: {
-		productId: null,
-		cmsId: null,
-		sapId: null,
-		hanaId: null,
-		sourceSystem: null,
-		barcode: null,
-		businessUnit: null,
-		brand: null,
-		subBrand: null,
-		color: null,
-		basicData: null,
-		shortDescription: null,
-		subCategory: null,
-		mainSapId: null,
-		groupType: null,
-		filterApplication: null,
-		filterAvailability: null,
-		filterBenefit: null,
-		filterCollection: null,
-		filterColor: null,
-		filterDesign: null,
-		filterDiameter: null,
-		filterFacing: null,
-		filterFunction: null,
-		filterLength: null,
-		filterMaterial: null,
-		filterModel: null,
-		filterPattern: null,
-		filterPerformance: null,
-		filterSeries: null,
-		filterShape: null,
-		filterSite: null,
-		filterSize: null,
-		filterStyle: null,
-		filterSystem: null,
-		filterThickness: null,
-		filterType: null,
-		filterWidth: null,
-		unit: null,
-		unitCode: null,
-		unitPerUsageArea: null,
-		usageAreaPerPackage: null,
-		usageAreaPerUnit: null,
-		unitPerPallet: null,
-		weightNumber: null,
-		weightUnit: null,
-		volumeNumber: null,
-		volumeUnit: null,
-		widthNumber: null,
-		widthText: null,
-		widthUnit: null,
-		heightNumber: null,
-		heightText: null,
-		heightUnit: null,
-		lengthNumber: null,
-		lengthText: null,
-		lengthUnit: null,
-		thicknessNumber: null,
-		thicknessText: null,
-		thicknessUnit: null,
-		product2D: null,
-		product3D: null,
-		image360: null,
-		createdAt: null
-	},
-	categories: [{
-		id: null,
-		code: null,
-		name: null,
-		parentId: null,
-		status: null,
-		calculable: null,
-		mainCategory: {
-			id: null,
-			code: null,
-			name: null,
-			parentId: null,
-			status: null,
-			calculable: null,
-			groups: [{
-				id: null,
-				name: null,
-				iconUrl: null,
-				url: null,
-				seq: null
-			}]
-		}
-	}],
-	applications: null,
-	attachments: null,
-	parent: {
-		id: null,
-		cmsId: null,
-		code: null,
-		barcode: null,
-		name: null,
-		price: null,
-		parentId: null,
-		status: null,
-		createdDate: null,
-		children: [{
-			id: null,
-			cmsId: null,
-			code: null,
-			barcode: null,
-			name: null,
-			price: null,
-			parentId: null,
-			status: null,
-			createdDate: null
-		}]
-	},
-	children: null
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
+	</sub-flow>
 </mule>

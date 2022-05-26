@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_286cd1f2_a3d5_448e_abcd_08b03bef832f_Output_Variables_COMN_PROD_IMG_RES = Array<{|  CMS_ID: String,   PROD_ID: String,   Keywords?: String,   Description?: String,   Updated?: Date,   Size?: String,   Alt?: String,   Title?: String,   Dimension?: String,   DateTime?: Date,   Created?: Date,   Attachment_URL?: String,   Extension?: String,   Copyright?: String,   Sitecore_ID?: String,   File_path?: String,   Format?: String,   File_name?: String,   Length?: String,   Width?: String,   Height?: String,   Expiration_date?: String,   ImageDescription?: String,   VDO_Dimension?: String,   Valid_from?: Date,   Valid_to?: Date,   dateFrom?: Date,   SRC_SYS?: String,   Required_System?: String,   prcs_nm?: String,   prcs_ld_id?: Number,   asat_dt?: Date,   updt_prcs_nm?: String,   updt_prcs_ld_id?: Number,   updt_asat_dt?: Date,   ods_updt_prcs_nm?: String,   ods_updt_prcs_ld_id?: Number,   ods_updt_asat_dt?: Date|}>
+

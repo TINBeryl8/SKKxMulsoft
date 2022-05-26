@@ -1,5 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="product_detail_subFlow" doc:id="b1c661eb-d161-4f05-ac20-2b3a417764b5" >
+		<flow-ref doc:name="call_DB_subFlow" doc:id="b930616c-3dff-4218-bc5b-f602c9a7b209" name="call_DB_subFlow"/>
+		<flow-ref doc:name="check_parent_subFlow" doc:id="cd2d9f8a-cf39-4b5f-a214-1efd65ca496a" name="check_parent_subFlow"/>
+		<flow-ref doc:name="check_child_subFlow" doc:id="65403c32-e85f-4688-b8a2-8ac03f26debe" name="check_child_subFlow" />
+	</sub-flow>
+	<sub-flow name="call_DB_subFlow" doc:id="112d1e6b-174f-4b68-aa4f-2287e23846f2" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="909f4073-cc29-41bf-9d94-d36568cd49a2">
+			<route>
+				<db:select doc:name="COMN_PROD" doc:id="c0eac32b-b4ed-4090-8359-f7fb64233397" config-ref="ODS_MSSQL">
+			<db:sql><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD
+WHERE PROD_ID = :PROD_ID]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	PROD_ID: vars.id
+}]]]></db:input-parameters>
+		</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_RES" doc:id="3e5f742c-841c-48e4-8cfe-7a7941e0a08e" variableName="COMN_PROD_RES" />
+			</route>
+			<route>
+				<db:select doc:name="COMN_PROD_IMG" doc:id="6ba6f7e6-ae3f-46d4-8297-7f7ca8cdea23" config-ref="ODS_MSSQL">
+					<db:sql><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD_IMG
+WHERE PROD_ID = :PROD_ID]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	PROD_ID: vars.id
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_IMG_RES" doc:id="22337a9f-90f9-4387-adc3-115b4fa700d1" variableName="COMN_PROD_IMG_RES" />
+			</route>
+			<route >
+				<db:select doc:name="COMN_PROD_DTL_IMG" doc:id="2ec07e93-e1f4-405d-a7b9-17096fd843b5" config-ref="ODS_MSSQL">
+					<db:sql ><![CDATA[SELECT * 
+FROM odsdev01.ODSDWHAPI.COMN_PROD_DTL_IMG 
+WHERE PROD_ID = :PROD_ID;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	PROD_ID: vars.id
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_DTL_IMG" doc:id="f0e7c932-ce02-4ffb-85df-2a3126c1c692" variableName="COMN_PROD_DTL_IMG"/>
+			</route>
+			<route >
+				<db:select doc:name="COMN_PROD_DTL" doc:id="a40834da-df57-4368-9258-e002a34e81a5" config-ref="ODS_MSSQL">
+					<db:sql ><![CDATA[SELECT * 
+FROM odsdev01.ODSDWHAPI.COMN_PROD_DTL WHERE PROD_ID = :PROD_ID]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	PROD_ID: vars.id
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_DTL_RES" doc:id="880cb162-9031-497e-80a5-8646da43ff6c" variableName="COMN_PROD_DTL_RES"/>
+			</route>
+		</scatter-gather>
+	</sub-flow>
+	<sub-flow name="check_parent_subFlow" doc:id="286cd1f2-a3d5-448e-abcd-08b03bef832f" >
+		<choice doc:name="Check MAT_NO_SAP_R3 not equal Main_Product_SAP_ID" doc:id="d755d4da-1c08-46c7-b0b7-78e81852af8b" >
+			<when expression="#[vars.COMN_PROD_RES[0].Main_Product_SAP_ID != vars.COMN_PROD_RES[0].MAT_NO_SAP_R3]">
+<!-- [STUDIO:"This is Childe"]				<logger level="INFO" doc:name="This is Childe" doc:id="fe7f00d8-3399-4281-928a-7c7981ae7119" message="This is Childe"/> [STUDIO] -->
+				<db:select doc:name="COMN_PROD" doc:id="9f9d05d6-8da0-4364-a67b-cb52ee8d49da" config-ref="ODS_MSSQL">
+					<db:sql ><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD
+WHERE MAT_NO_SAP_R3 = :Main_Product_SAP_ID]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	Main_Product_SAP_ID: vars.COMN_PROD_RES[0].Main_Product_SAP_ID
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="check_parent_res" doc:id="1e0d6b69-8565-4c8b-a0f7-59dd9410d4b2" variableName="check_parent_res"/>
+			</when>
+			<otherwise >
+<!-- [STUDIO:"This is Parent Just Check Child"]				<logger level="INFO" doc:name="This is Parent Just Check Child" doc:id="9f37c93e-9e72-4bd0-b3c0-08ffe875afea" message="This is Parent"/> [STUDIO] -->
+				<db:select doc:name="COMN_PROD" doc:id="3a75e644-cdc4-4f9b-8322-d735e72a201e" config-ref="ODS_MSSQL">
+					<db:sql ><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD
+WHERE Main_Product_SAP_ID = :Main_Product_SAP_ID]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	Main_Product_SAP_ID: vars.COMN_PROD_RES[0].Main_Product_SAP_ID
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="check_parent_res" doc:id="f1abca37-99df-4bd7-a219-c93a4c3f6e85" variableName="check_parent_res"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="check_child_subFlow" doc:id="e37e3ffe-47c3-48ba-a89e-3db53de7ab18" >
+		<db:select doc:name="COMN_PROD" doc:id="211f4d1e-118a-4b90-a213-0e3ea7eac92b" config-ref="ODS_MSSQL">
+			<db:sql ><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD
+WHERE Main_Product_SAP_ID = :Main_Product_SAP_ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	Main_Product_SAP_ID: vars.check_parent_res[0].Main_Product_SAP_ID
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="check_child_res" doc:id="ff778ce4-5fd6-4f07-89ee-a6df7132f4ef" variableName="check_child_res"/>
+	</sub-flow>
+</mule>

@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="product_listSub_Flow" doc:id="1f9b1991-e0d2-4190-822e-a1f0a0331739" >
+		<db:select doc:name="Select" doc:id="8f420388-0461-4072-8bb9-c91ed9e3d1a9" config-ref="ODS_MSSQL">
+			<db:sql ><![CDATA[SELECT *
+FROM odsdev01.ODSDWHAPI.COMN_PROD 
+order by CMS_ID 
+OFFSET 10 ROWS 
+FETCH NEXT 20 ROWS ONLY;]]></db:sql>
+		</db:select>
+		<set-variable value="" doc:name="setQry" doc:id="c794f0d0-f3a1-41d9-aa9d-c85074b14f04" variableName="setQry"/>
+		<ee:transform doc:name="Transform Message" doc:id="7e06a6fe-cab4-4886-a15a-1d5611d720b8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+import unwrap from dw::core::Strings
+output application/java
+---
+unwrap(write(vars.commonQueryParams, "application/json"),'"')]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="9dcfeda3-625a-461b-aec9-3e5be5c39387" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
