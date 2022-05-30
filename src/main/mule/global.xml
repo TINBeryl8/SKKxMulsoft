@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	<configuration doc:name="Configuration" doc:id="cd4792a6-e622-4e39-8ebc-7c9306075a27" defaultErrorHandler-ref="globalError_Handler" />
 	<configuration-properties doc:name="Configuration properties" doc:id="756b68bf-84d3-440f-8672-ce6fb2aa61be" file="${env}-config.yaml" />
-	<http:listener-config name="smartsaleskit-system-api-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="${http.port}" />
-    </http:listener-config>
 	<db:config name="ODS_MSSQL" doc:name="Database Config" doc:id="e619b757-8330-41e5-bab1-fa2ea609c70c" >
 		<db:mssql-connection host="${ods_database.host}" user="${ods_database.user}" password="${ods_database.pass}" databaseName="${ods_database.db_name}" />
 	</db:config>
-	<global-property doc:name="Global Property" doc:id="b644ff83-8ccb-4e6d-9436-7c2e15b63022" name="env" value="DEV" />
+	<api-gateway:autodiscovery apiId="${autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ead567e5-8803-47a2-a315-6a16240f6e89" flowRef="smartsaleskit-system-api-main" />
 	<error-handler name="globalError_Handler" doc:id="9370779d-414a-4259-9210-e1ba42447f57" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a9c99f84-6d27-49df-9ebe-aaf328aa9795" type="ANY">
 			<ee:transform doc:name="Transform Message" doc:id="9d99c071-7807-4a64-a83f-7cb988ecb4b7">

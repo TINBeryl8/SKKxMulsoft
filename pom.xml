@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<app.runtime>4.3.0-20210322</app.runtime>
+		<app.runtime>4.3.0-20220420</app.runtime>
 		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
 	</properties>
 
@@ -35,6 +35,10 @@
 							<groupId>com.microsoft.sqlserver</groupId>
 							<artifactId>mssql-jdbc</artifactId>
 						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>org.codehaus.groovy</groupId>
+							<artifactId>groovy-all</artifactId>
+						</sharedLibrary>
 					</sharedLibraries>
 				</configuration>
 			</plugin>
@@ -43,29 +47,10 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.5.24</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-sockets-connector</artifactId>
-			<version>1.2.1</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.5.1</version>
 			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>cb2a4d97-b91a-47bb-9eb0-9a97b16ff2a5</groupId>
-			<artifactId>smartsaleskit-system-api</artifactId>
-			<version>1.0.1</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
@@ -77,6 +62,38 @@
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 			<version>6.2.2.jre8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-scripting-module</artifactId>
+			<version>2.0.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.4.16</version>
+			<classifier>indy</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-validation-module</artifactId>
+			<version>1.4.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mycompany</groupId>
+			<artifactId>scg-domain</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<classifier>mule-domain</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>cb2a4d97-b91a-47bb-9eb0-9a97b16ff2a5</groupId>
+			<artifactId>smartsaleskit-system-api</artifactId>
+			<version>1.0.6</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

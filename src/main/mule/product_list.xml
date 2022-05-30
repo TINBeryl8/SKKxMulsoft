@@ -1,35 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="product_listSub_Flow" doc:id="1f9b1991-e0d2-4190-822e-a1f0a0331739" >
-		<db:select doc:name="Select" doc:id="8f420388-0461-4072-8bb9-c91ed9e3d1a9" config-ref="ODS_MSSQL">
-			<db:sql ><![CDATA[SELECT *
-FROM odsdev01.ODSDWHAPI.COMN_PROD 
-order by CMS_ID 
-OFFSET 10 ROWS 
-FETCH NEXT 20 ROWS ONLY;]]></db:sql>
-		</db:select>
-		<set-variable value="" doc:name="setQry" doc:id="c794f0d0-f3a1-41d9-aa9d-c85074b14f04" variableName="setQry"/>
-		<ee:transform doc:name="Transform Message" doc:id="7e06a6fe-cab4-4886-a15a-1d5611d720b8">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-import unwrap from dw::core::Strings
-output application/java
----
-unwrap(write(vars.commonQueryParams, "application/json"),'"')]]></ee:set-payload>
+		<ee:transform doc:name="cast orderBy and ph2" doc:id="101f14c5-0945-4347-87a4-c9bd2cc13b76" >
+			<ee:message >
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="orderBy" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.commonQueryParams.orderBy replace "[" with "" replace "]" with "" replace ":" with " " replace "\"" with "" default null]]></ee:set-variable>
+				<ee:set-variable variableName="ph2" ><![CDATA[%dw 2.0
+output application/json
+//var replace_ph2 = vars.commonQueryParams.ph2 replace "[" with "" replace "]" with ""  default ""
+---
+//replace_ph2 splitBy(",") default ""
+
+(vars.commonQueryParams.ph2 replace "[" with "'" replace "]" with "" replace "," with "%' OR PH2 LIKE '" ++ "%'") default null]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="9dcfeda3-625a-461b-aec9-3e5be5c39387" >
+		<ee:transform doc:name="set body payload" doc:id="888be425-bdee-4575-9d52-73607aa7cbe0" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+{
+	search: ("'" ++ vars.commonQueryParams.search ++ "%" ++ "'") default "''",
+	skip: (vars.commonQueryParams.skip) default 0,
+	take: vars.commonQueryParams.take default 999,
+	name: ("'" ++ vars.commonQueryParams.name ++ "%" ++ "'") default "''",
+	code: ("'" ++ vars.commonQueryParams.code ++ "%" ++ "'") default "''",
+	barcode: ("'" ++ vars.commonQueryParams.barcode ++ "%" ++ "'") default "''",
+	status: if(vars.commonQueryParams.status == "active") "'Yes'"
+			else if (vars.commonQueryParams.status == "inactive") "'No'"
+			else "''",
+	ph2: (vars.ph2 as String) default "''",
+	filter: ("'" ++ vars.commonQueryParams.filter ++ "%" ++ "'") default "''",
+	orderBy: (vars.orderBy as String) default "''"
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<choice doc:name="Choice" doc:id="3937571d-29f3-440a-aabc-2840797ad6bd" >
+			<when expression="#[(!isEmpty(vars.commonQueryParams.skip) or !isEmpty(vars.commonQueryParams.take))]">
+				<validation:is-false doc:name="check skip or test when is not null" doc:id="6c5f5a0a-1e93-493a-9310-31914297ebfb" expression='#[isEmpty(vars.commonQueryParams.orderBy) and (vars.commonQueryParams.skip != "" or vars.commonQueryParams.take != "")]' message="Field Required is ['orderBy'], Becasue ['skip'] or ['take'] not null"/>
+			</when>
+		</choice>
+		<choice doc:name="Choice" doc:id="7cf1962a-910e-4ce0-8ade-3b52b3228037" >
+			<when expression="#[vars.commonQueryParams.orderBy != '' and vars.commonQueryParams.orderBy != &quot;&quot; and vars.commonQueryParams.orderBy != null]">
+				<flow-ref doc:name="call_DBList_have-orderBy_subFlow" doc:id="5a25d239-01d5-4891-99e5-81d10be25e9a" name="call_DBList_have-orderBy_subFlow"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="call_DBList_subFlow" doc:id="ec4ef09c-1d51-4035-94a0-17ed5ff92a95" name="call_DBList_subFlow"/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="set body_qry_img variable" doc:id="410f001f-1be3-4023-94d5-1381c3e727e0" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="body_qry_img" ><![CDATA[%dw 2.0
+output application/json
+---
+"'" ++ (vars.COMN_PROD_RES.CMS_ID joinBy ("' OR CMS_ID = '")) ++ "'" default null]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name='call_DBImage_subFlow' doc:id="9a112984-0ac9-4f65-b3f4-dbdb0311244e" name="call_DBImage_subFlow"/>
+	</sub-flow>
+	<sub-flow name="call_DBList_subFlow" doc:id="c805f185-acfa-4f41-ac26-af675a76a137" >
+		<set-variable value='#["SELECT * FROM odsdev01.ODSDWHAPI.COMN_PROD WHERE Barcode LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_TH LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_EN LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_TH LIKE " ++ (payload.name)&#10;	++ " OR Product_NAME_EN LIKE " ++ (payload.name) &#10;	++ " OR Barcode LIKE " ++ (payload.barcode) &#10;	++ " OR Active_Status_Website = " ++ (payload.status)&#10;	++ " OR PH2 LIKE " ++ (payload.ph2)&#10;	++ " OR Filter_Application LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Availability LIKE " ++ (payload.filter) &#10;	++  " OR Filter_Benefit LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Collection LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Color LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Design LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Diameter LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Facing LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Function LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Length LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Material LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Model LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Pattern LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Performance LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Series LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Shape LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Shape LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Site LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Size LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Style LIKE " ++ (payload.filter)&#10;	++ " OR Filter_System LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Thickness LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Type LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Width LIKE " ++ (payload.filter) ++ ";"]' doc:name="set qry no orderBy" doc:id="0c5fd67b-3e15-4f1f-827f-23b785197bdb" variableName="qry"/>
+		<db:select doc:name="COMN_PROD" doc:id="679b74b4-4b0a-4540-943f-edc03aad1b8c" config-ref="ODS_MSSQL">
+			<db:sql ><![CDATA[#[vars.qry]]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	search: payload.search,
+	skip: payload.skip,
+	take: payload.take,
+	name: payload.name,
+	code: payload.code,
+	barcode: payload.barcode,
+	status: if(payload.status == "active") "Yes"
+			else if (payload.status == "inactive") "No"
+			else null,
+	test: payload.ph2,
+	filter: payload.filter,
+	orderBy: payload.orderBy
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_RES" doc:id="46ee136a-d9a1-4666-b19a-50dd30f5e12f" variableName="COMN_PROD_RES"/>
+	</sub-flow>
+	<sub-flow name="call_DBList_have-orderBy_subFlow" doc:id="ae9faf45-86ea-4f4b-9cbf-2c6cc41012ee" >
+		<set-variable value='#["SELECT * FROM odsdev01.ODSDWHAPI.COMN_PROD WHERE Barcode LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_TH LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_EN LIKE " ++ (payload.search)&#10;	++ " OR Product_Name_TH LIKE " ++ (payload.name)&#10;	++ " OR Product_NAME_EN LIKE " ++ (payload.name) &#10;	++ " OR Barcode LIKE " ++ (payload.barcode) &#10;	++ " OR Active_Status_Website = " ++ (payload.status)&#10;	++ " OR PH2 LIKE " ++ (payload.ph2)&#10;	++ " OR Filter_Application LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Availability LIKE " ++ (payload.filter) &#10;	++  " OR Filter_Benefit LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Collection LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Color LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Design LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Diameter LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Facing LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Function LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Length LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Material LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Model LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Pattern LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Performance LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Series LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Shape LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Shape LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Site LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Size LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Style LIKE " ++ (payload.filter)&#10;	++ " OR Filter_System LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Thickness LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Type LIKE " ++ (payload.filter)&#10;	++ " OR Filter_Width LIKE " ++ (payload.filter) ++ " "&#10;++ "ORDER BY " ++ (payload.orderBy)&#10;++ " OFFSET "++ (payload.skip) ++ " ROW" ++ " FETCH NEXT " ++ (payload.take) ++ " ROWS ONLY" ++ ";"]' doc:name="set qry have orderBy" doc:id="45af0e42-f778-4f20-b267-26b4de2e3d05" variableName="qry"/>
+		<db:select doc:name="COMN_PROD" doc:id="5e81d8db-f917-44ba-92ff-baf95cc8f767" config-ref="ODS_MSSQL">
+			<db:sql ><![CDATA[#[vars.qry]]]></db:sql>
+		</db:select>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_RES" doc:id="e7a7a828-c39f-4fab-9157-57733f5c71e2" variableName="COMN_PROD_RES"/>
+	</sub-flow>
+	<sub-flow name="call_DBImage_subFlow" doc:id="34c02a9b-fc0b-4f0c-a25a-dc7bed11767d" >
+		<set-variable value='#["SELECT * FROM odsdev01.ODSDWHAPI.COMN_PROD_IMG WHERE CMS_ID = " ++ (vars.body_qry_img)&#10;	++  ";"]' doc:name="set qry_img variable" doc:id="5c9bb315-f5b6-48b3-b662-50ca91ca87ae" variableName="qry_img"/>
+		<db:select doc:name="COMN_PROD_IMG" doc:id="182ac724-e9c3-48b3-84c3-bd65777efd0c" config-ref="ODS_MSSQL">
+			<db:sql ><![CDATA[#[vars.qry_img]]]></db:sql>
+		</db:select>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="COMN_PROD_IMG_RES" doc:id="845d6782-6330-4171-82ed-d1700fc45390" variableName="COMN_PROD_IMG_RES"/>
 	</sub-flow>
 </mule>

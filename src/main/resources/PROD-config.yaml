@@ -2,11 +2,11 @@ app_api:
  version: "v1"
  path: "api"
  
-http:
-  port: "8081"
-  
 ods_database:
   host: "do-ods-dev.database.windows.net"
   user: "mulesoftapp"
   pass: "xgZNaF76o%Wz^"
   db_name: "odsdev01"
+  
+autodiscovery: 
+  id: "17863015"
