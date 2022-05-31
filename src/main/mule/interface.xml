@@ -160,8 +160,8 @@ var comn_img = vars.COMN_PROD_IMG_RES
 var comn_count = vars.COMN_PROD_COUNT_RES[0]
 ---
 {
-	limit: vars.commonQueryParams.skip default "",
-	offset: vars.commonQueryParams.take default "",
+	limit: vars.commonQueryParams.take default "",
+	offset: vars.commonQueryParams.skip default "",
 	total: valuesOf(comn_count)[0] default "",
 	results: comn_prod map (prod_res) -> {
 //		id: prod_res.id,

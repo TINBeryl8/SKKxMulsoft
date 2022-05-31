@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 	<db:config name="ODS_MSSQL" doc:name="Database Config" doc:id="e619b757-8330-41e5-bab1-fa2ea609c70c" >
 		<db:mssql-connection host="${ods_database.host}" user="${ods_database.user}" password="${ods_database.pass}" databaseName="${ods_database.db_name}" />
 	</db:config>
-	<api-gateway:autodiscovery apiId="${autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="97015ce8-71de-458f-b74f-57a59ae2c8cf" flowRef="smartsaleskit-system-api-main" />
+	
 	<error-handler name="globalError_Handler" doc:id="9370779d-414a-4259-9210-e1ba42447f57" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a9c99f84-6d27-49df-9ebe-aaf328aa9795" type="ANY">
 			<ee:transform doc:name="Transform Message" doc:id="9d99c071-7807-4a64-a83f-7cb988ecb4b7">
