@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>cb2a4d97-b91a-47bb-9eb0-9a97b16ff2a5</groupId>
 			<artifactId>smartsaleskit-system-api</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>

@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_ae9faf45_86ea_4f4b_9cbf_2c6cc41012ee_Input_Variables_orderBy = {|  |}
-

@@ -1,9 +1,0 @@
-%dw 2.0
-
-type auto_34c02a9b_fc0b_4f0c_a25a_dc7bed11767d_Output_Variables_COMN_PROD_RES = Array<{ _?: java_lang_Object }>
-type java_lang_Object = {|  |} {"typeAlias": "Object",
-"class": "java.lang.Object",
-"typeId": "java.lang.Object"}
-
-
-
